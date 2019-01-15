@@ -1,4 +1,46 @@
-class block {
+const SHA256 = require('crypto-js/sha256');
+
+class Blockchain {
+  constructor() {
+    this.chain = [createGenesis()];
+  }
+
+  // First block in the blockchain
+  createGenesis() {
+    return new Block(0, '01/15/19', 'Genesis Block', 0);
+  }
+
+  // Returns newest block
+  latestBlock() {
+    return this.chain[this.chain.length - 1];
+  }
+
+  // Adds a new block to the chain
+  addBlock(newBlock) {
+    newBlock.previousHash = this.latestBlock().hash;
+    newBlock.hash = newBlock.calculateHash();
+    this.chain.push(newBlock);
+  }
+
+  // Ensures blocks in the chain has not been tampered with
+  checkValid() {
+    for (let i = 1; i < this.chain.length; i++) {
+      const CURRENT_BLOCK = this.chain[i];
+      const PREVIOUS_BLOCK = this.chain[i - 1];
+
+      if (CURRENT_BLOCK.hash !== CURRENT_BLOCK.calculateHash()) {
+        return false;
+      }
+
+      if (CURRENT_BLOCK.previousHash !== PREVIOUS_BLOCK.hash) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
+class Block {
   constructor(timestamp, data) {
     this.index = 0; // Where in the chain it is located
     this.timestamp = timestamp;
@@ -18,3 +60,11 @@ class block {
 
   mineBlock(difficulty) {}
 }
+
+// Test Blockchain
+let jsChain = new Blockchain();
+jsChain.addBlock(new Block('12/25/2017', { amount: 5 }));
+jsChain.addBlock(new Block('12/26/2017', { amount: 10 }));
+
+console.log(JSON.stringify(jsChain, null, 4));
+console.log('Is blockchain valid? ' + jsChain.checkValid());
