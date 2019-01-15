@@ -2,7 +2,7 @@ const SHA256 = require('crypto-js/sha256');
 
 class Blockchain {
   constructor() {
-    this.chain = [createGenesis()];
+    this.chain = [this.createGenesis()];
   }
 
   // First block in the blockchain
@@ -55,7 +55,7 @@ class Block {
     return SHA256(
       // Utilizes SHA256 hash function from crypto.JS
       this.index + this.timestamp + this.data + this.nonce + this.previousHash
-    ).toString;
+    ).toString();
   }
 
   mineBlock(difficulty) {}
