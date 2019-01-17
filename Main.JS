@@ -9,7 +9,7 @@ class Block {
         this.data = data;
         this.previousHash = previousHash;
         this.hash = this.calculateHash();
-        this.nonce = 0; // "Number used once" for mining
+        this.nonce = 0;
     }
 
     calculateHash() {
@@ -78,9 +78,9 @@ class Blockchain {
 }
 
 // ! Tests Blockchain
-let jsChain = new Blockchain();
+let SamCoin = new Blockchain();
 
 console.log('Mining Block 1...');
-jsChain.addBlock(new Block(1, '1/15/2019', { amount: 5 }));
+SamCoin.addBlock(new Block(1, '1/15/2019', { amount: 5 }));
 console.log('Mining Block 2...');
-jsChain.addBlock(new Block(2, '1/16/2019', { amount: 11 }));
+SamCoin.addBlock(new Block(2, '1/16/2019', { amount: 11 }));
