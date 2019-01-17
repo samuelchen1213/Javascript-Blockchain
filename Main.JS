@@ -1,8 +1,43 @@
 const SHA256 = require('crypto-js/sha256');
 
+class Block {
+  constructor(index, timestamp, data, previousHash = '') {
+    this.index = index; // Where in the chain it is located
+    this.timestamp = timestamp;
+    this.data = data;
+    this.previousHash = previousHash;
+    this.hash = this.calculateHash();
+    this.nonce = 0; // "Number used once" for mining
+  }
+
+  // calculateHash() takes every piece of data from the block, therefore tampering would result in different hash
+  calculateHash() {
+    return SHA256(
+      // Utilizes SHA256 hash function from crypto.JS
+      this.index +
+        this.timestamp +
+        this.previousHash +
+        JSON.stringify(this.data) +
+        this.nonce
+    ).toString();
+  }
+
+  mineBlock(difficulty) {
+    // Makes a string of zeros exactly the same length of the difficulty
+    while (
+      this.hash.substring(0, difficulty) !== Array(difficulty + 1).join('0')
+    ) {
+      this.nonce++;
+      this.hash = this.calculateHash();
+    }
+    console.log('Block mined: ' + this.hash);
+  }
+}
+
 class Blockchain {
   constructor() {
     this.chain = [this.createGenesis()];
+    this.difficulty = 4;
   }
 
   // First block in the blockchain
@@ -18,7 +53,7 @@ class Blockchain {
   // Adds a new block to the chain
   addBlock(newBlock) {
     newBlock.previousHash = this.latestBlock().hash;
-    newBlock.hash = newBlock.calculateHash();
+    newBlock.mineBlock(this.difficulty);
     this.chain.push(newBlock);
   }
 
@@ -40,31 +75,10 @@ class Blockchain {
   }
 }
 
-class Block {
-  constructor(timestamp, data) {
-    this.index = 0; // Where in the chain it is located
-    this.timestamp = timestamp;
-    this.data = data;
-    this.previousHash = 0;
-    this.hash = this.calculateHash();
-    this.nonce = 0; // Used for mining mechanism in the blockchain
-  }
-
-  // calculateHash() takes every piece of data from the block, therefore tampering would result in different hash
-  calculateHash() {
-    return SHA256(
-      // Utilizes SHA256 hash function from crypto.JS
-      this.index + this.timestamp + this.data + this.nonce + this.previousHash
-    ).toString();
-  }
-
-  mineBlock(difficulty) {}
-}
-
 // Test Blockchain
 let jsChain = new Blockchain();
-jsChain.addBlock(new Block('12/25/2017', { amount: 5 }));
-jsChain.addBlock(new Block('12/26/2017', { amount: 10 }));
 
-console.log(JSON.stringify(jsChain, null, 4));
-console.log('Is blockchain valid? ' + jsChain.checkValid());
+console.log('Mining Block 1...');
+jsChain.addBlock(new Block(1, '1/15/2019', { amount: 5 }));
+console.log('Mining Block 2...');
+jsChain.addBlock(new Block(2, '1/16/2019', { amount: 11 }));
