@@ -1,16 +1,16 @@
 // ? Utilizes SHA256 hash function from crypto.JS
 const SHA256 = require('crypto-js/sha256');
 
-// * ----------------------------------- Creation of Transaction ------------------------------------
+// * =================================== Creation of Transaction =====================================
 class Transaction {
-    constructor(fromAdress, toAdress, amount) {
-        this.fromAdress = fromAdress;
-        this.toAdress = toAdress;
+    constructor(fromAddress, toAddress, amount) {
+        this.fromAddress = fromAddress;
+        this.toAddress = toAddress;
         this.amount = amount;
     }
 }
 
-// * -------------------------------------- Creation of Block ---------------------------------------
+// * ====================================== Creation of Block ========================================
 class Block {
     constructor(timestamp, transaction, previousHash = '') {
         this.timestamp = timestamp;
@@ -30,6 +30,7 @@ class Block {
         ).toString();
     }
 
+    // Prevents spam
     mineBlock(difficulty) {
         // Makes a string of zeros exactly the same length of the difficulty
         while (
@@ -43,7 +44,7 @@ class Block {
     }
 }
 
-// * --------------------------------- Creation of Blockchain ---------------------------------------
+// * ================================= Creation of Blockchain =====================================
 class Blockchain {
     constructor() {
         this.chain = [this.createGenesis()];
@@ -83,14 +84,14 @@ class Blockchain {
         let balance = 0;
 
         for (const block of this.chain) {
-            for (const trans of block.transactions) {
+            for (const trans of block.transaction) {
                 // Money going out of account
-                if (trans.fromAddress == address) {
+                if (trans.fromAddress === address) {
                     balance -= trans.amount;
                 }
 
                 // Money going into account
-                if (trans.toAddress == address) {
+                if (trans.toAddress === address) {
                     balance += trans.amount;
                 }
             }
@@ -117,4 +118,18 @@ class Blockchain {
 }
 
 // ! Tests Blockchain
-let SamCoin = new Blockchain();
+let samCoin = new Blockchain();
+samCoin.createTransaction(new Transaction('address1', 'address2', 100));
+samCoin.createTransaction(new Transaction('address2', 'address1', 50));
+
+// Transactions will then be pending, miner would need to make block...
+
+console.log('\n Miner will mine!');
+samCoin.minePendingTransaction('Miner Address');
+
+console.log('\n My balance is ', samCoin.getBalanceOfAddress('Miner Address'));
+// Mining reward is sent to pending, will only enter balance once a new block is mined
+
+console.log('\n Miner will mine!');
+samCoin.minePendingTransaction('Miner Address');
+console.log('\n My balance is ', samCoin.getBalanceOfAddress('Miner Address'));
