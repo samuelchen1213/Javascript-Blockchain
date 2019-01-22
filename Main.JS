@@ -25,7 +25,7 @@ class Block {
             this.index +
                 this.timestamp +
                 this.previousHash +
-                JSON.stringify(this.data) +
+                JSON.stringify(this.transaction) +
                 this.nonce
         ).toString();
     }
@@ -65,6 +65,7 @@ class Blockchain {
 
     minePendingTransaction(miningRewardAddress) {
         let block = new Block(Date.now(), this.pendingTransaction);
+        console.log(JSON.stringify(block.timestamp));
         block.mineBlock(this.difficulty);
 
         console.log('Block successfully mined! 😋');
@@ -129,10 +130,6 @@ samCoin.minePendingTransaction('Miner Address');
 
 console.log('\n My balance is ', samCoin.getBalanceOfAddress('Miner Address'));
 // Mining reward is sent to pending, will only enter balance once a new block is mined
-
-console.log('\n Miner will mine!');
-samCoin.minePendingTransaction('Miner Address');
-console.log('\n My balance is ', samCoin.getBalanceOfAddress('Miner Address'));
 
 console.log('\n Miner will mine!');
 samCoin.minePendingTransaction('Miner Address');
